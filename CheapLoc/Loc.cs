@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace CheapLoc
 {
-    public static class CheapLoc
+    public static class Loc
     {
         private static Dictionary<string, IEnumerable<LocEntry>> _locData = new Dictionary<string, IEnumerable<LocEntry>>();
 
@@ -31,7 +31,7 @@ namespace CheapLoc
             var assemblyName = GetCallingAssemblyName(Assembly.GetCallingAssembly());
 
             if (!_locData.ContainsKey(assemblyName))
-                throw new ArgumentException("Localization data was not initialized for this assembly.");
+                return $"#{key}";
 
             var localizedString = _locData[assemblyName].FirstOrDefault(x => x.Key == key);
 
