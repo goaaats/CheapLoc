@@ -17,15 +17,15 @@ namespace CheapLoc.Test
         {
             InitializeComponent();
 
-            CheapLoc.Setup(File.ReadAllText("de_DE.json"));
+            Loc.Setup(File.ReadAllText("de_DE.json"));
 
-            label1.Text = CheapLoc.Localize("LabelTest", "This is a label test.");
-            button1.Text = CheapLoc.Localize("ButtonTest", "Click me!");
+            label1.Text = Loc.Localize("LabelTest", "This is a label test.");
+            button1.Text = Loc.Localize("ButtonTest", "Click me!");
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(CheapLoc.Localize("MsgBoxText", "A box! Nice!"));
+            MessageBox.Show(Loc.Localize("MsgBoxText", "A box! Nice!"));
         }
     }
 }

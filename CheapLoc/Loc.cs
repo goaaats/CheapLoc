@@ -26,7 +26,7 @@ namespace CheapLoc
         }
 
         [MethodImpl(MethodImplOptions.PreserveSig | MethodImplOptions.NoInlining)]
-        public static string Localize(string key, string fallBack = "")
+        public static string Localize(string key, string fallBack)
         {
             var assemblyName = GetCallingAssemblyName(Assembly.GetCallingAssembly());
 
