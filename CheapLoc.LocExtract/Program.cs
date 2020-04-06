@@ -28,16 +28,18 @@ namespace CheapLoc.LocExtract
             // Try to load missing assemblies from the local directory of the requesting assembly
             // This would usually be implicit when using Assembly.Load(), but Assembly.LoadFile() doesn't do it...
             // This handler should only be invoked on things that fail regular lookups, but it *is* global to this appdomain
-            AppDomain.CurrentDomain.AssemblyResolve += (object source, ResolveEventArgs e) =>
+            AppDomain.CurrentDomain.AssemblyResolve += (source, e) =>
             {
-                Console.WriteLine($"Resolving missing assembly {e.Name}");
+                Debug.WriteLine($"Resolving missing assembly {e.Name}");
                 // This looks weird but I'm pretty sure it's actually correct.  Pretty sure.  Probably.
-                var assemblyPath = Path.Combine(Path.GetDirectoryName(e.RequestingAssembly.Location), new AssemblyName(e.Name).Name + ".dll");
+                var assemblyPath = Path.Combine(Path.GetDirectoryName(e.RequestingAssembly.Location),
+                    new AssemblyName(e.Name).Name + ".dll");
                 if (!File.Exists(assemblyPath))
                 {
-                    Console.WriteLine($"Assembly not found at {assemblyPath}");
+                    Debug.WriteLine($"Assembly not found at {assemblyPath}");
                     return null;
                 }
+
                 return Assembly.LoadFrom(assemblyPath);
             };
 
@@ -51,38 +53,25 @@ namespace CheapLoc.LocExtract
 
             foreach (var type in types.Where(x => x.IsClass || x.IsAbstract))
             {
-                Console.WriteLine(type.FullName);
-
                 var toParse = new List<MethodBase>();
                 toParse.AddRange(type.GetTypeInfo().DeclaredConstructors);
                 toParse.AddRange(type.GetTypeInfo().DeclaredMethods);
 
                 foreach (var method in toParse)
-                {
-                    Console.WriteLine("     ->" + method.Name);
-
                     try
                     {
                         var instructions = MethodBodyReader.GetInstructions(method);
 
-                        var lastCall = new Stack<string>();
-
-                        foreach (Instruction instruction in instructions)
+                        foreach (var instruction in instructions)
                         {
-                            if (instruction.OpCode == OpCodes.Ldstr)
-                            {
-                                lastCall.Push(instruction.Operand.ToString());
-                                continue;
-                            }
-
                             if (instruction.OpCode == OpCodes.Call)
                             {
-                                MethodInfo methodInfo = instruction.Operand as MethodInfo;
+                                var methodInfo = instruction.Operand as MethodInfo;
 
                                 if (methodInfo != null && methodInfo.IsStatic)
                                 {
                                     var methodType = methodInfo.DeclaringType;
-                                    ParameterInfo[] parameters = methodInfo.GetParameters();
+                                    var parameters = methodInfo.GetParameters();
 
                                     if (!methodInfo.Name.Contains("Localize"))
                                         continue;
@@ -92,27 +81,28 @@ namespace CheapLoc.LocExtract
                                         type.FullName,
                                         methodType.Name,
                                         methodInfo.Name,
-                                        String.Join(", ",
+                                        string.Join(", ",
                                             parameters.Select(p =>
                                                 p.ParameterType.FullName + " " + p.Name).ToArray())
                                     );
 
-                                    outList.Add(new LocEntry
+                                    var entry = new LocEntry
                                     {
-                                        Message = lastCall.Pop(),
-                                        Key = lastCall.Pop()
-                                    });
+                                        Message = instruction.Previous.Operand as string,
+                                        Key = instruction.Previous.Previous.Operand as string
+                                    };
 
-                                    lastCall.Clear();
+                                    Console.WriteLine($"{entry.Key} - {entry.Message}");
+
+                                    outList.Add(entry);
                                 }
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Couldn't parse {method.Name}:\n{ex}");
+                        Debug.WriteLine($"Couldn't parse {method.Name}:\n{ex}");
                     }
-                }
             }
 
             File.WriteAllText("out.json", JsonConvert.SerializeObject(outList, new JsonSerializerSettings
