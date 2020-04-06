@@ -12,7 +12,7 @@ namespace CheapLoc
 {
     public static class Loc
     {
-        private static Dictionary<string, IEnumerable<LocEntry>> _locData = new Dictionary<string, IEnumerable<LocEntry>>();
+        private static Dictionary<string, Dictionary<string, LocEntry>> _locData = new Dictionary<string, Dictionary<string, LocEntry>>();
 
         [MethodImpl(MethodImplOptions.PreserveSig | MethodImplOptions.NoInlining)]
         public static void Setup(string locData)
@@ -22,7 +22,7 @@ namespace CheapLoc
             if (_locData.ContainsKey(assemblyName))
                 throw new ArgumentException("Already loaded localization data for " + assemblyName);
 
-            _locData.Add(assemblyName, JsonConvert.DeserializeObject<IEnumerable<LocEntry>>(locData));
+            _locData.Add(assemblyName, JsonConvert.DeserializeObject<Dictionary<string, LocEntry>>(locData));
         }
 
         [MethodImpl(MethodImplOptions.PreserveSig | MethodImplOptions.NoInlining)]
@@ -33,9 +33,7 @@ namespace CheapLoc
             if (!_locData.ContainsKey(assemblyName))
                 return $"#{key}";
 
-            var localizedString = _locData[assemblyName].FirstOrDefault(x => x.Key == key);
-
-            if (localizedString == null)
+            if (!_locData[assemblyName].TryGetValue(key, out var localizedString))
                 return string.IsNullOrEmpty(fallBack) ? $"#{key}" : fallBack;
 
             return string.IsNullOrEmpty(localizedString.Message) ? $"#{key}" : localizedString.Message;

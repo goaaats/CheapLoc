@@ -49,7 +49,7 @@ namespace CheapLoc.LocExtract
 
             var types = loadedAssembly.GetTypes();
 
-            var outList = new List<LocEntry>();
+            var outList = new Dictionary<string, LocEntry>();
 
             foreach (var type in types.Where(x => x.IsClass || x.IsAbstract))
             {
@@ -76,7 +76,7 @@ namespace CheapLoc.LocExtract
                                     if (!methodInfo.Name.Contains("Localize"))
                                         continue;
 
-                                    Console.WriteLine("          ->({0}) {1}.{2}.{3}({4});",
+                                    Console.WriteLine("->({0}) {1}.{2}.{3}({4});",
                                         method.DeclaringType.Assembly.GetName().Name,
                                         type.FullName,
                                         methodType.Name,
@@ -89,12 +89,26 @@ namespace CheapLoc.LocExtract
                                     var entry = new LocEntry
                                     {
                                         Message = instruction.Previous.Operand as string,
-                                        Key = instruction.Previous.Previous.Operand as string
+                                        Description = $"{type.Name}.{method.Name}"
                                     };
 
-                                    Console.WriteLine($"{entry.Key} - {entry.Message}");
+                                    var key = instruction.Previous.Previous.Operand as string;
 
-                                    outList.Add(entry);
+                                    if (string.IsNullOrEmpty(key))
+                                    {
+                                        throw new Exception($"Key was empty for message: {entry.Message} (from {entry.Description})");
+                                    }
+
+                                    if (outList.Any(x => x.Key == key))
+                                    {
+                                        if (outList.Any(x => x.Key == key && x.Value.Message != entry.Message))
+                                            throw new Exception($"Message with key {key} has previous appearance but other fallback text in {entry.Description}");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine($"    ->{key} - {entry.Message} (from {entry.Description})");
+                                        outList.Add(key, entry);
+                                    }
                                 }
                             }
                         }
