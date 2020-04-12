@@ -39,7 +39,7 @@ namespace CheapLoc
             var assemblyName = GetAssemblyName(assembly);
 
             if (_locData.ContainsKey(assemblyName))
-                throw new ArgumentException("Already loaded localization data for " + assemblyName);
+                _locData.Remove(assemblyName);
 
             _locData.Add(assemblyName, JsonConvert.DeserializeObject<Dictionary<string, LocEntry>>(locData));
         }
