@@ -23,10 +23,20 @@ namespace CheapLoc
         /// Set-up localization data for the calling assembly with the provided JSON structure.
         /// </summary>
         /// <param name="locData">JSON structure containing a key/LocEntry mapping.</param>
-        [MethodImpl(MethodImplOptions.PreserveSig | MethodImplOptions.NoInlining)]
         public static void Setup(string locData)
         {
-            var assemblyName = GetAssemblyName(Assembly.GetCallingAssembly());
+            Setup(locData, Assembly.GetCallingAssembly());
+        }
+
+        /// <summary>
+        /// Set-up localization data for the provided assembly with the provided JSON structure.
+        /// </summary>
+        /// <param name="locData">JSON structure containing a key/LocEntry mapping.</param>
+        /// <param name="assembly">Assembly to load the localization data for.</param>
+        [MethodImpl(MethodImplOptions.PreserveSig | MethodImplOptions.NoInlining)]
+        public static void Setup(string locData, Assembly assembly)
+        {
+            var assemblyName = GetAssemblyName(assembly);
 
             if (_locData.ContainsKey(assemblyName))
                 throw new ArgumentException("Already loaded localization data for " + assemblyName);
@@ -35,27 +45,50 @@ namespace CheapLoc
         }
 
         /// <summary>
-        /// Set-up empty localization data to force all fallbacks to show.
+        /// Set-up empty localization data to force all fallbacks to show for the calling assembly.
         /// </summary>
         public static void SetupWithFallbacks()
         {
-            Setup("{}");
+            Setup("{}", Assembly.GetCallingAssembly());
         }
 
         /// <summary>
-        /// Search the set-up localization data for this assembly for the given string key and return it.
+        /// Set-up empty localization data to force all fallbacks to show for the provided assembly.
+        /// </summary>
+        /// <param name="assembly">Assembly to load the localization data for.</param>
+        public static void SetupWithFallbacks(Assembly assembly)
+        {
+            Setup("{}", assembly);
+        }
+
+        /// <summary>
+        /// Search the set-up localization data for the provided assembly for the given string key and return it.
         /// If the key is not present, the fallback is shown.
         /// The fallback is also required to create the string files to be localized.
         /// 
-        /// Calling this method should always be the last step in your localization chain.
+        /// Calling this method should always be the first step in your localization chain.
         /// </summary>
         /// <param name="key">The string key to be returned.</param>
-        /// <param name="fallBack">The fallback string, usually your source language.</param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.PreserveSig | MethodImplOptions.NoInlining)]
+        /// <param name="fallBack">The fallback string, usually your source language.</param>#
+        /// <returns>The localized string, fallback or string key if not found.</returns>
         public static string Localize(string key, string fallBack)
         {
-            var assemblyName = GetAssemblyName(Assembly.GetCallingAssembly());
+            return Localize(key, fallBack, Assembly.GetCallingAssembly());
+        }
+
+        /// <summary>
+        /// Search the set-up localization data for the calling assembly for the given string key and return it.
+        /// If the key is not present, the fallback is shown.
+        /// The fallback is also required to create the string files to be localized.
+        /// </summary>
+        /// <param name="key">The string key to be returned.</param>
+        /// <param name="fallBack">The fallback string, usually your source language.</param>#
+        /// <param name="assembly">Assembly to load the localization data for.</param>
+        /// <returns>The localized string, fallback or string key if not found.</returns>
+        [MethodImpl(MethodImplOptions.PreserveSig | MethodImplOptions.NoInlining)]
+        public static string Localize(string key, string fallBack, Assembly assembly)
+        {
+            var assemblyName = GetAssemblyName(assembly);
 
             if (!_locData.ContainsKey(assemblyName))
                 return $"#{key}";
