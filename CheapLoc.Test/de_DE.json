@@ -1,1 +1,15 @@
-[{"Key":"LabelTest","Message":"Das hier ist ein Test-Label!"},{"Key":"ButtonTest","Message":""},{"Key":"MsgBoxText","Message":"Eine Box! Knorke."}]
+{
+
+  "1": {
+    "Key": "LabelTest",
+    "Message": "Das hier ist ein Test-Label!"
+  },
+  "2": {
+    "Key": "ButtonTest",
+    "Message": "Du hast"
+  },
+  "3": {
+    "Key": "MsgBoxText",
+    "Message": "Eine Box! Knorke."
+  }
+}

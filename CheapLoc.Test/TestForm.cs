@@ -23,7 +23,7 @@ namespace CheapLoc.Test
             button1.Text = Loc.Localize("ButtonTest", "Click me!");
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             MessageBox.Show(Loc.Localize("MsgBoxText", "A box! Nice!"));
         }

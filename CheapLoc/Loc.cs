@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,7 +16,7 @@ namespace CheapLoc
     /// </summary>
     public static class Loc
     {
-        private static Dictionary<string, Dictionary<string, LocEntry>> _locData = new Dictionary<string, Dictionary<string, LocEntry>>();
+        private static readonly Dictionary<string, Dictionary<string, LocEntry>> LocData = new();
 
         /// <summary>
         /// Set-up localization data for the calling assembly with the provided JSON structure.
@@ -38,10 +37,10 @@ namespace CheapLoc
         {
             var assemblyName = GetAssemblyName(assembly);
 
-            if (_locData.ContainsKey(assemblyName))
-                _locData.Remove(assemblyName);
+            if (LocData.ContainsKey(assemblyName))
+                LocData.Remove(assemblyName);
 
-            _locData.Add(assemblyName, JsonConvert.DeserializeObject<Dictionary<string, LocEntry>>(locData));
+            LocData.Add(assemblyName, JsonConvert.DeserializeObject<Dictionary<string, LocEntry>>(locData));
         }
 
         /// <summary>
@@ -90,10 +89,10 @@ namespace CheapLoc
         {
             var assemblyName = GetAssemblyName(assembly);
 
-            if (!_locData.ContainsKey(assemblyName))
+            if (!LocData.ContainsKey(assemblyName))
                 return $"#{key}";
 
-            if (!_locData[assemblyName].TryGetValue(key, out var localizedString))
+            if (!LocData[assemblyName].TryGetValue(key, out var localizedString))
                 return string.IsNullOrEmpty(fallBack) ? $"#{key}" : fallBack;
 
             return string.IsNullOrEmpty(localizedString.Message) ? $"#{key}" : localizedString.Message;
