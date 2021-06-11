@@ -27,5 +27,10 @@ namespace CheapLoc.Test
         {
             MessageBox.Show(Loc.Localize("MsgBoxText", "A box! Nice!"));
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Loc.ExportLocalizable();
+        }
     }
 }

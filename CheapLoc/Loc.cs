@@ -6,8 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using Mono.Reflection;
+using Mono.Cecil;
 using Newtonsoft.Json;
+using OpCodes = Mono.Cecil.Cil.OpCodes;
 
 namespace CheapLoc
 {
@@ -106,7 +107,86 @@ namespace CheapLoc
         {
             var types = assembly.GetTypes();
 
+            var debugOutput = string.Empty;
             var outList = new Dictionary<string, LocEntry>();
+
+            var assemblyDef = AssemblyDefinition.ReadAssembly(assembly.Location);
+
+            var toInspect = assemblyDef.MainModule.GetTypes()
+                .SelectMany(t => t.Methods
+                    .Where(m => m.HasBody)
+                    .Select(m => new {t, m}));
+
+            foreach (var tm in toInspect)
+            {
+                var instructions = tm.m.Body.Instructions;
+
+                foreach (var instruction in instructions)
+                {
+                    if (instruction.OpCode == OpCodes.Call)
+                    {
+                        var methodInfo = instruction.Operand as MethodReference;
+
+                        if (methodInfo != null)
+                        {
+                            var methodType = methodInfo.DeclaringType;
+                            var parameters = methodInfo.Parameters;
+
+                            if (!methodInfo.Name.Contains("Localize"))
+                                continue;
+
+                            debugOutput += string.Format("->{0}.{1}.{2}({3});\n", 
+                                    tm.t.FullName,
+                                    methodType.Name,
+                                    methodInfo.Name,
+                                    string.Join(", ",
+                                        parameters.Select(p =>
+                                            p.ParameterType.FullName + " " + p.Name).ToArray())
+                                );
+
+                            var entry = new LocEntry
+                            {
+                                Message = instruction.Previous.Operand as string,
+                                Description = $"{tm.t.Name}.{tm.m.Name}"
+                            };
+
+                            var key = instruction.Previous.Previous.Operand as string;
+
+                            if (string.IsNullOrEmpty(key))
+                            {
+                                throw new Exception(
+                                    $"Key was empty for message: {entry.Message} (from {entry.Description})");
+                            }
+
+                            if (outList.Any(x => x.Key == key))
+                            {
+                                if (outList.Any(x => x.Key == key && x.Value.Message != entry.Message))
+                                {
+                                    throw new Exception(
+                                        $"Message with key {key} has previous appearance but other fallback text in {entry.Description}");
+                                }
+                            }
+                            else
+                            {
+                                debugOutput += $"    ->{key} - {entry.Message} (from {entry.Description})\n";
+                                outList.Add(key, entry);
+                            }
+                        }
+                    }
+                }
+            }
+
+            File.WriteAllText("loc.log", debugOutput);
+            File.WriteAllText($"{GetAssemblyName(assembly)}_Localizable.json", JsonConvert.SerializeObject(outList,
+                new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented
+                }));
+
+            return;
+
+            /*
+            Old version, depended on Mono.Reflection/MethodBaseRocks
 
             foreach (var type in types.Where(x => x.IsClass || x.IsAbstract))
             {
@@ -117,7 +197,7 @@ namespace CheapLoc
                 foreach (var method in toParse)
                     try
                     {
-                        var instructions = MethodBodyReader.GetInstructions(method);
+                        var instructions = method.GetInstructions();
 
                         foreach (var instruction in instructions)
                             if (instruction.OpCode == OpCodes.Call)
@@ -173,12 +253,7 @@ namespace CheapLoc
                         Debug.WriteLine($"Couldn't parse {method.Name}:\n{ex}");
                     }
             }
-
-            File.WriteAllText($"{GetAssemblyName(assembly)}_Localizable.json", JsonConvert.SerializeObject(outList,
-                new JsonSerializerSettings
-                {
-                    Formatting = Formatting.Indented
-                }));
+            */
         }
 
         /// <summary>
