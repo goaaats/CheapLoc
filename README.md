@@ -1,6 +1,6 @@
-# ReflexLoc
+# CheapLoc
 
-ReflexLoc is a .NET localization library that is easy to integrate, very low-effort to maintain and does not require maintaining a separate localization database.
+CheapLoc is a .NET localization library that is easy to integrate, very low-effort to maintain and does not require maintaining a separate localization database.
 
 It outputs JSON files that can be used together with popular localization tools like Crowdin.
 
