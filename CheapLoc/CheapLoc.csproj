@@ -12,6 +12,17 @@
     <FileAlignment>512</FileAlignment>
     <LangVersion>9.0</LangVersion>
     <Deterministic>true</Deterministic>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>goaaats</Authors>
+    <PackageProjectUrl>https://github.com/goaaats/CheapLoc</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/goaaats/CheapLoc</RepositoryUrl>
+    <PackageVersion>1.1.5</PackageVersion>
+    <Description>A very cheap .NET localization library.</Description>
+    <Tags>localization</Tags>
+    <Copyright>Copyright ©2021 goatsoft</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
