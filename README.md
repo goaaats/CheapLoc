@@ -1,4 +1,4 @@
-# CheapLoc
+# CheapLoc ![Nuget](https://img.shields.io/nuget/v/CheapLoc)
 
 CheapLoc is a .NET localization library that is easy to integrate, very low-effort to maintain and does not require maintaining a separate localization database.
 
