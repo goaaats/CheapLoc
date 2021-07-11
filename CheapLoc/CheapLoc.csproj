@@ -3,48 +3,52 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <AssemblyVersion>1.1.6.0</AssemblyVersion>
+    <AssemblyVersion>1.1.7.0</AssemblyVersion>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CheapLoc</RootNamespace>
     <AssemblyName>CheapLoc</AssemblyName>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
     <FileAlignment>512</FileAlignment>
     <LangVersion>9.0</LangVersion>
     <Deterministic>true</Deterministic>
+  </PropertyGroup>
 
+  <PropertyGroup Label="NuGet">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>goaaats</Authors>
     <PackageProjectUrl>https://github.com/goaaats/CheapLoc</PackageProjectUrl>
     <RepositoryUrl>https://github.com/goaaats/CheapLoc</RepositoryUrl>
-    <PackageVersion>1.1.6</PackageVersion>
+    <PackageVersion>1.1.7</PackageVersion>
     <Description>A very cheap .NET localization library.</Description>
     <Tags>localization</Tags>
     <Copyright>Copyright ©2021 goatsoft</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+
+  <PropertyGroup Label="Build">
+    <OutputPath>bin\$(Configuration)\$(Release)</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>$(OutputPath)\CheapLoc.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Label="Build" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\CheapLoc.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Label="Build" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\CheapLoc.xml</DocumentationFile>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Mono.Cecil" Version="0.9.6.1" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.3" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
+    <PackageReference Include="Mono.Cecil" Version="0.9.6.1" Condition=" '$(TargetFramework)' == 'net472' " />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 </Project>
