@@ -65,7 +65,7 @@ namespace CheapLoc
         /// Search the set-up localization data for the provided assembly for the given string key and return it.
         /// If the key is not present, the fallback is shown.
         /// The fallback is also required to create the string files to be localized.
-        /// 
+        ///
         /// Calling this method should always be the first step in your localization chain.
         /// </summary>
         /// <param name="key">The string key to be returned.</param>
@@ -135,7 +135,7 @@ namespace CheapLoc
                             if (!methodInfo.Name.Contains("Localize"))
                                 continue;
 
-                            debugOutput += string.Format("->{0}.{1}.{2}({3});\n", 
+                            debugOutput += string.Format("->{0}.{1}.{2}({3});\n",
                                     tm.t.FullName,
                                     methodType.Name,
                                     methodInfo.Name,
@@ -155,7 +155,7 @@ namespace CheapLoc
                             if (string.IsNullOrEmpty(key))
                             {
                                 throw new Exception(
-                                    $"Key was empty for message: {entry.Message} (from {entry.Description})");
+                                    $"Key was empty for message: {entry.Message} (from {entry.Description}) in {tm.t.FullName}::{tm.m.FullName}");
                             }
 
                             if (outList.Any(x => x.Key == key))
@@ -163,7 +163,7 @@ namespace CheapLoc
                                 if (outList.Any(x => x.Key == key && x.Value.Message != entry.Message))
                                 {
                                     throw new Exception(
-                                        $"Message with key {key} has previous appearance but other fallback text in {entry.Description}");
+                                        $"Message with key {key} has previous appearance but other fallback text in {entry.Description} in {tm.t.FullName}::{tm.m.FullName}");
                                 }
                             }
                             else
