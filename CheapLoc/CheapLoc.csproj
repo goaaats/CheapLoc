@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <AssemblyVersion>1.1.7.0</AssemblyVersion>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CheapLoc</RootNamespace>
     <AssemblyName>CheapLoc</AssemblyName>
     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
-    <FileAlignment>512</FileAlignment>
     <LangVersion>9.0</LangVersion>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
@@ -25,25 +21,13 @@
     <Copyright>Copyright ©2021 goatsoft</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
-  <PropertyGroup Label="Build">
-    <OutputPath>bin\$(Configuration)\$(Release)</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>$(OutputPath)\CheapLoc.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Label="Build" Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Label="Build" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
