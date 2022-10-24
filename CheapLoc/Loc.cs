@@ -103,7 +103,8 @@ namespace CheapLoc
         /// Saves localizable JSON data in the current working directory for the provided assembly.
         /// </summary>
         /// <param name="assembly">Assembly to save localization data from.</param>
-        public static void ExportLocalizableForAssembly(Assembly assembly)
+        /// <param name="ignoreInvalidFunctions">If set to true, this ignores malformed Localize functions instead of failing.</param>
+        public static void ExportLocalizableForAssembly(Assembly assembly, bool ignoreInvalidFunctions = false)
         {
             var types = assembly.GetTypes();
 
@@ -154,8 +155,14 @@ namespace CheapLoc
 
                             if (string.IsNullOrEmpty(key))
                             {
-                                throw new Exception(
-                                    $"Key was empty for message: {entry.Message} (from {entry.Description}) in {tm.t.FullName}::{tm.m.FullName}");
+                                var errMsg = $"Key was empty for message: {entry.Message} (from {entry.Description}) in {tm.t.FullName}::{tm.m.FullName}";
+                                if (ignoreInvalidFunctions)
+                                {
+                                    debugOutput += $"{errMsg}\n";
+                                    continue;
+                                }
+                                else
+                                    throw new Exception(errMsg);
                             }
 
                             if (outList.Any(x => x.Key == key))
@@ -259,9 +266,10 @@ namespace CheapLoc
         /// <summary>
         /// Saves localizable JSON data in the current working directory for the calling assembly.
         /// </summary>
-        public static void ExportLocalizable()
+        /// <param name="ignoreInvalidFunctions">If set to true, this ignores malformed Localize functions instead of failing.</param>
+        public static void ExportLocalizable(bool ignoreInvalidFunctions = false)
         {
-            ExportLocalizableForAssembly(Assembly.GetCallingAssembly());
+            ExportLocalizableForAssembly(Assembly.GetCallingAssembly(), ignoreInvalidFunctions);
         }
 
         private static string GetAssemblyName(Assembly assembly) => assembly.GetName().Name;
