@@ -15,7 +15,7 @@
     <Authors>goaaats</Authors>
     <PackageProjectUrl>https://github.com/goaaats/CheapLoc</PackageProjectUrl>
     <RepositoryUrl>https://github.com/goaaats/CheapLoc</RepositoryUrl>
-    <PackageVersion>1.1.7</PackageVersion>
+    <PackageVersion>1.1.8</PackageVersion>
     <Description>A very cheap .NET localization library.</Description>
     <Tags>localization</Tags>
     <Copyright>Copyright ©2021 goatsoft</Copyright>
