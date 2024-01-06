@@ -33,6 +33,6 @@
   <ItemGroup>
     <PackageReference Include="Mono.Cecil" Version="0.11.3" Condition=" '$(TargetFramework)' == 'netstandard2.0' " />
     <PackageReference Include="Mono.Cecil" Version="0.9.6.1" Condition=" '$(TargetFramework)' == 'net472' " />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 </Project>
